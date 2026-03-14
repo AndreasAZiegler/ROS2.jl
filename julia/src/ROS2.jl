@@ -82,8 +82,11 @@ end
 include("context.jl")
 include("node.jl")
 include("messages.jl")
+include("actions.jl")
 include("publisher.jl")
 include("subscription.jl")
 include("executor.jl")
+include("action_client.jl")
+include("action_server.jl")
 
 end # module ROS2

@@ -13,8 +13,14 @@ end
     get_typesupport(type_name::AbstractString) -> Ptr{Cvoid}
 
 Return a ROS2 message typesupport handle pointer for a known message type.
+
+The C++ shim returns an opaque pointer wrapper (`ConstCxxPtr`); we unwrap it to
+its raw pointer field (`cpp_object`).
 """
-get_typesupport(type_name::AbstractString) = _cpp_get_typesupport(String(type_name))
+function get_typesupport(type_name::AbstractString)::Ptr{Cvoid}
+    ts = _cpp_get_typesupport(String(type_name))
+    return ts.cpp_object
+end
 
 get_typesupport(::Type{StringMsg}) = get_typesupport("std_msgs/String")
 

@@ -3,6 +3,7 @@
 
 #include <rcl/types.h>
 #include <rcl/wait.h>
+// #include <rcl/wait_set.h>
 
 namespace ros2_julia {
 
@@ -15,9 +16,16 @@ void Executor::add_subscription(Subscription &sub) {
 void Executor::spin_once(int timeout_ms) {
   ready_.clear();
 
+  const size_t nsubs = subscriptions_.size();
+  if (nsubs == 0) {
+    // rcl_wait on an empty wait set returns RCL_RET_WAIT_SET_EMPTY; treat as a
+    // no-op.
+    (void)timeout_ms;
+    return;
+  }
+
   rcl_allocator_t allocator = rcl_get_default_allocator();
   rcl_wait_set_t wait_set = rcl_get_zero_initialized_wait_set();
-  const size_t nsubs = subscriptions_.size();
 
   throw_on_rcl_error(rcl_wait_set_init(&wait_set, nsubs, 0, 0, 0, 0, 0,
                                        ctx_.rcl_context(), allocator),

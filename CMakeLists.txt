@@ -9,6 +9,8 @@ option(ROS2_JULIA_BUILD_EXAMPLES "Build example binaries (optional)" OFF)
 
 # ROS2 C API libs
 find_package(rcl REQUIRED)
+find_package(rcl_action REQUIRED)
+find_package(example_interfaces REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
@@ -16,6 +18,8 @@ find_package(rosidl_typesupport_c REQUIRED)
 
 # For the proof-of-concept std_msgs/msg/String wrapper.
 find_package(std_msgs REQUIRED)
+
+# Optional: used only for the `_cpp_get_action_typesupport` mapping example.
 
 # CxxWrap / libcxxwrap-julia (CMake package is typically JlCxx)
 find_package(JlCxx REQUIRED)
@@ -35,6 +39,11 @@ endif()
 set(_ROS2_JULIA_RCL_LIB rcl::rcl)
 if(NOT TARGET ${_ROS2_JULIA_RCL_LIB})
   set(_ROS2_JULIA_RCL_LIB rcl)
+endif()
+
+set(_ROS2_JULIA_RCL_ACTION_LIB rcl_action::rcl_action)
+if(NOT TARGET ${_ROS2_JULIA_RCL_ACTION_LIB})
+  set(_ROS2_JULIA_RCL_ACTION_LIB rcl_action)
 endif()
 
 set(_ROS2_JULIA_RCUTILS_LIB rcutils::rcutils)
@@ -59,12 +68,15 @@ endif()
 
 add_library(ros2_julia SHARED
   cpp/module.cpp
+  cpp/fibonacci_msgs.cpp
   cpp/context.cpp
   cpp/node.cpp
   cpp/publisher.cpp
   cpp/subscription.cpp
   cpp/executor.cpp
   cpp/messages.cpp
+  cpp/action_client.cpp
+  cpp/action_server.cpp
   cpp/utils.cpp
 )
 
@@ -75,8 +87,10 @@ target_include_directories(ros2_julia
 
 target_link_libraries(ros2_julia
   PRIVATE
+    example_interfaces::example_interfaces__rosidl_generator_c
     JlCxx::cxxwrap_julia
     ${_ROS2_JULIA_RCL_LIB}
+    ${_ROS2_JULIA_RCL_ACTION_LIB}
     ${_ROS2_JULIA_RCUTILS_LIB}
     ${_ROS2_JULIA_RMW_LIB}
     ${_ROS2_JULIA_ROSIDL_RUNTIME_C_LIB}
@@ -99,6 +113,7 @@ if(UNIX AND NOT APPLE)
   set(_ros2_julia_rpath_dirs "")
   foreach(_t IN ITEMS
     ${_ROS2_JULIA_RCL_LIB}
+    ${_ROS2_JULIA_RCL_ACTION_LIB}
     ${_ROS2_JULIA_RCUTILS_LIB}
     ${_ROS2_JULIA_RMW_LIB}
     ${_ROS2_JULIA_ROSIDL_RUNTIME_C_LIB}
