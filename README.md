@@ -56,4 +56,3 @@ using ROS2
 - This repo intentionally does not include high-level ROS logic in C++.
 - For real message support you will want the generator to emit both Julia
   structs and C++ glue to obtain typesupport handles per message.
-
