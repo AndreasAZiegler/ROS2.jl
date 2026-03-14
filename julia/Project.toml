@@ -1,0 +1,7 @@
+name = "ROS2"
+uuid = "b8bfe0f0-8d4c-4c15-8c9a-1c8b9cfb6a01"
+version = "0.1.0"
+
+[deps]
+CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
